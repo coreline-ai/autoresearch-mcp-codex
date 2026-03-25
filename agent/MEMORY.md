@@ -1,7 +1,7 @@
 # MEMORY
 
 ## Accepted Patterns
-- placeholder iteration
+- placeholder: normalization
 
 ## Rejected Patterns
 

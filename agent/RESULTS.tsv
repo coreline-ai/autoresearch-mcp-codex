@@ -1,3 +1,5 @@
 iteration	timestamp	hypothesis_id	status	decision_code	score_before	score_after	score_delta	tests_pass	constraints_ok	critic_severity	critic_recommendation	changed_files_count	change_summary	rollback_reason
 2	2026-03-25T13:07:17Z	H-001	reject	NO_IMPROVEMENT	1.0	1.0	0.0	true	true	low	reject	1	placeholder iteration	placeholder: score did not improve
 3	2026-03-25T13:07:18Z	H-001	accept	ACCEPT	0.0	1.0	1.0	true	true	low	accept	1	placeholder iteration	
+2	2026-03-25T13:23:39Z	H-001	reject	NO_IMPROVEMENT	1.0	1.0	0.0	true	true	low	reject	1	placeholder: normalization	placeholder
+1	2026-03-25T13:31:29Z	H-001	accept	ACCEPT	0.5	1.0	0.5	true	true	low	accept	1	placeholder: normalization	
