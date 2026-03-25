@@ -81,8 +81,8 @@ bash scripts/run_eval.sh
 update_state "decide"
 
 # Read eval result
-SCORE_AFTER="$(python3 -c 'import json; print(json.load(open("tmp/eval_result.json"))["score"])')"
-TESTS_PASS="$(python3 -c 'import json; print(json.load(open("tmp/tests_result.json"))["passed"])')"
+SCORE_AFTER="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/eval_result.json").read_text(encoding="utf-8"))["score"])')"
+TESTS_PASS="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/tests_result.json").read_text(encoding="utf-8"))["passed"])')"
 
 DECISION="reject"
 DECISION_CODE="NO_IMPROVEMENT"
@@ -104,7 +104,7 @@ if [[ "$DECISION" == "accept" ]]; then
   python3 <<PY
 import json
 from pathlib import Path
-baseline = json.load(Path("eval/baseline.json"))
+baseline = json.loads(Path("eval/baseline.json").read_text(encoding="utf-8"))
 baseline["score"] = float("$SCORE_AFTER")
 baseline["iteration"] = $ITERATION
 baseline["measured_at"] = "2026-03-25T00:00:00Z"
@@ -119,12 +119,31 @@ else
   bash scripts/rollback_change.sh
 fi
 
+# Write controller result for loop orchestration (after rollback)
+mkdir -p tmp
+python3 <<PY
+import json
+from pathlib import Path
+result = {
+  "decision": "$DECISION",
+  "decision_code": "$DECISION_CODE",
+  "score_after": float("$SCORE_AFTER"),
+  "score_before": float("$BASELINE"),
+  "score_delta": round(float("$SCORE_AFTER") - float("$BASELINE"), 6)
+}
+Path("tmp/controller_result.json").write_text(
+    json.dumps(result, ensure_ascii=False, indent=2),
+    encoding="utf-8"
+)
+PY
+
 # Phase: ARCHIVE
 update_state "archive"
 
 # Log result
 python3 <<PY
 import json
+import subprocess
 from pathlib import Path
 
 payload = {
@@ -144,15 +163,15 @@ payload = {
   "rollback_reason": "$ROLLBACK_REASON"
 }
 
-# Call log_result.py
-import subprocess
-subprocess.run([
-  "python3", "scripts/log_result.py",
-  json.dumps(payload)
-], check=False)
+# Call log_result.py via stdin
+subprocess.run(
+  ["python3", "scripts/log_result.py"],
+  input=json.dumps(payload).encode("utf-8"),
+  check=False
+)
 PY
 
-# Update memory
+# Update memory via stdin
 python3 scripts/update_memory.py <<PY || true
 {
   "iteration": $ITERATION,

@@ -57,7 +57,7 @@ if [[ ! -f "eval/baseline.json" ]]; then
 fi
 
 # Load baseline
-CURRENT_BASELINE="$(python3 -c 'import json; from pathlib import Path; print(json.load(Path("eval/baseline.json"))["score"])')"
+CURRENT_BASELINE="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("eval/baseline.json").read_text(encoding="utf-8"))["score"])')"
 echo "[loop] baseline=$CURRENT_BASELINE"
 
 # Tracking variables
@@ -85,8 +85,8 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
   fi
 
   # Read decision
-  DECISION="$(python3 -c 'import json; from pathlib import Path; print(json.load(Path("tmp/controller_result.json"))["decision"])')"
-  NEW_BASELINE="$(python3 -c 'import json; from pathlib import Path; print(json.load(Path("eval/baseline.json"))["score"])')"
+  DECISION="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/controller_result.json").read_text(encoding="utf-8"))["decision"])')"
+  NEW_BASELINE="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("eval/baseline.json").read_text(encoding="utf-8"))["score"])')"
 
   echo "[loop] decision=$DECISION baseline_now=$NEW_BASELINE"
 
