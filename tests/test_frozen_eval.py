@@ -51,7 +51,7 @@ def test_frozen_eval_main_output_format() -> None:
     import subprocess
 
     result = subprocess.run(
-        ["python", "eval/frozen_eval.py"],
+        ["python3", "eval/frozen_eval.py"],
         capture_output=True,
         text=True,
         cwd=Path(__file__).parent.parent
