@@ -5,16 +5,20 @@ from pathlib import Path
 
 @dataclass
 class OrchestratorConfig:
-    max_iterations: int = 10; target_score: float | None = None; mode: str = "single-agent"
-    allow_dirty: bool = False; baseline_path: Path = field(default=lambda: Path("eval/baseline.json"))
-    frozen_eval_path: Path = field(default=lambda: Path("eval/frozen_eval.py"))
-    tests_path: Path = field(default=lambda: Path("tests"))
-    results_path: Path = field(default=lambda: Path("agent/RESULTS.tsv"))
-    decisions_path: Path = field(default=lambda: Path("agent/DECISIONS.md"))
-    memory_path: Path = field(default=lambda: Path("agent/MEMORY.md"))
-    tmp_path: Path = field(default=lambda: Path("tmp"))
-    reports_path: Path = field(default=lambda: Path("reports"))
-    use_git: bool = True; max_no_improvement_streak: int = 3
+    max_iterations: int = 10
+    target_score: float | None = None
+    mode: str = "single-agent"
+    allow_dirty: bool = False
+    baseline_path: Path = field(default_factory=lambda: Path("eval/baseline.json"))
+    frozen_eval_path: Path = field(default_factory=lambda: Path("eval/frozen_eval.py"))
+    tests_path: Path = field(default_factory=lambda: Path("tests"))
+    results_path: Path = field(default_factory=lambda: Path("agent/RESULTS.tsv"))
+    decisions_path: Path = field(default_factory=lambda: Path("agent/DECISIONS.md"))
+    memory_path: Path = field(default_factory=lambda: Path("agent/MEMORY.md"))
+    tmp_path: Path = field(default_factory=lambda: Path("tmp"))
+    reports_path: Path = field(default_factory=lambda: Path("reports"))
+    use_git: bool = True
+    max_no_improvement_streak: int = 3
 
 def load_baseline(config):
     if not config.baseline_path.exists():

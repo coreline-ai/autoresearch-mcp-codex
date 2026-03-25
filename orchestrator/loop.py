@@ -27,16 +27,21 @@ class LoopOrchestrator:
             try:
                 ctrl = self.runner.run(iteration=i, baseline_score=current)
             except Exception as e:
-                print(f"[loop] Failed: {e}"); break
+                print(f"[loop] Failed: {e}")
+                break
             new = load_baseline(self.config)["score"]
             print(f"[loop] decision={ctrl.decision} baseline_now={new}")
-            if new > current: streak = 0
-            else: streak += 1
-            print(f"[loop] No improvement (streak: {streak}/{self.config.max_no_improvement_streak})" if streak else ""
+            if new > current:
+                streak = 0
+            else:
+                streak += 1
+                print(f"[loop] No improvement (streak: {streak}/{self.config.max_no_improvement_streak})")
             current = new
             if target and current >= target:
-                print(f"[loop] Target reached: {current} >= {target}"); break
+                print(f"[loop] Target reached: {current} >= {target}")
+                break
             if streak >= self.config.max_no_improvement_streak:
-                print(f"[loop] No improvement for {self.config.max_no_improvement_streak} iterations. Stopping."); break
+                print(f"[loop] No improvement for {self.config.max_no_improvement_streak} iterations. Stopping.")
+                break
         print(f"[loop] Final baseline: {current}")
         return {"status": "completed", "final_score": current, "iterations_run": i}
