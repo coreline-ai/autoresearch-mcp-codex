@@ -1,0 +1,1 @@
+iteration	timestamp	hypothesis_id	status	decision_code	score_before	score_after	score_delta	tests_pass	constraints_ok	critic_severity	critic_recommendation	changed_files_count	change_summary	rollback_reason

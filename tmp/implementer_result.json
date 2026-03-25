@@ -1,0 +1,11 @@
+{
+  "changed_files": [
+    "src/search/normalize.py"
+  ],
+  "change_summary": "placeholder: applied punctuation normalization",
+  "why_this_change": "should improve matching consistency",
+  "verification_commands_run": [],
+  "notes": [
+    "placeholder implementation"
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "Q-001",
+    "query": "wireless-mouse!!",
+    "expected_keywords": ["wireless", "mouse"],
+    "description": "punctuation-heavy product query"
+  },
+  {
+    "id": "Q-002",
+    "query": "USB-C cable???",
+    "expected_keywords": ["usb", "c", "cable"],
+    "description": "mixed punctuation query"
+  },
+  {
+    "id": "Q-003",
+    "query": "bluetooth speaker",
+    "expected_keywords": ["bluetooth", "speaker"],
+    "description": "normal baseline query"
+  }
+]

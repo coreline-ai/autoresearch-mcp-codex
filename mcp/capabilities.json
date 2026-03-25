@@ -1,0 +1,19 @@
+{
+  "required": [
+    "filesystem",
+    "shell",
+    "git"
+  ],
+  "optional": [
+    "logs",
+    "browser",
+    "database"
+  ],
+  "bootstrap_mode": {
+    "enabled_servers": [
+      "filesystem",
+      "shell",
+      "git"
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "servers": [
+    {
+      "name": "filesystem",
+      "enabled": true,
+      "description": "Read/write files inside the workspace",
+      "policy": {
+        "workspace_only": true,
+        "allow_delete": false
+      }
+    },
+    {
+      "name": "shell",
+      "enabled": true,
+      "description": "Run tests and eval commands",
+      "policy": {
+        "workspace_only": true,
+        "allow_network": false,
+        "allow_destructive_commands": false
+      }
+    },
+    {
+      "name": "git",
+      "enabled": true,
+      "description": "Inspect diffs, restore changes, commit accepted iterations",
+      "policy": {
+        "allow_commit": true,
+        "allow_force_push": false,
+        "allow_history_rewrite": false
+      }
+    }
+  ]
+}
