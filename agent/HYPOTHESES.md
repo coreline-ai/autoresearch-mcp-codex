@@ -5,7 +5,7 @@
   - expected_effect: recall improvement
   - risk: minor precision drop
   - priority: high
-  - status: selected
+  - status: rejected
 
 - H-002
   - title: lowercase normalization before tokenization

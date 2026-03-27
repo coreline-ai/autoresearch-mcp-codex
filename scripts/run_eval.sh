@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+PYTHON="${PYTHON:-python3}"
+
 mkdir -p tmp
 
 STDOUT_FILE="tmp/eval_stdout.txt"
 STDERR_FILE="tmp/eval_stderr.txt"
 EXIT_CODE=0
 
-python3 eval/frozen_eval.py > "$STDOUT_FILE" 2> "$STDERR_FILE" || EXIT_CODE=$?
+$PYTHON eval/frozen_eval.py > "$STDOUT_FILE" 2> "$STDERR_FILE" || EXIT_CODE=$?
 
 if [[ "$EXIT_CODE" -ne 0 ]]; then
-  python3 <<'PY'
+  $PYTHON <<'PY'
 import json
 from pathlib import Path
 
-stderr = Path("tmp/eval_stderr.txt").read_text(encoding="utf-8", errors="ignore") if Path("tmp/eval_stderr.txt").exists() ""
+stderr = Path("tmp/eval_stderr.txt").read_text(encoding="utf-8", errors="ignore") if Path("tmp/eval_stderr.txt").exists() else ""
 
 result = {
     "score": 0.0,

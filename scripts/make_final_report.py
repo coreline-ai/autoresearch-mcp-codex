@@ -33,8 +33,8 @@ def generate_final_report(results: list[dict]) -> str:
     if not results:
         return "# Final Report\n\nNo iterations completed."
 
-    accepted = [r for r in results if r["status"] == "accepted"]
-    rejected = [r for r in results if r["status"] == "rejected"]
+    accepted = [r for r in results if r["status"] == "accept"]
+    rejected = [r for r in results if r["status"] == "reject"]
 
     best_score = 0.0
     for r in results:

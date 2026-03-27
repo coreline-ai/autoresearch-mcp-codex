@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export PYTHON="${PYTHON:-python3}"
+
 # Default values
 MAX_ITERATIONS=10
 TARGET_SCORE=""
@@ -57,7 +59,7 @@ if [[ ! -f "eval/baseline.json" ]]; then
 fi
 
 # Load baseline
-CURRENT_BASELINE="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("eval/baseline.json").read_text(encoding="utf-8"))["score"])')"
+CURRENT_BASELINE="$($PYTHON -c 'import json; from pathlib import Path; print(json.loads(Path("eval/baseline.json").read_text(encoding="utf-8"))["score"])')"
 echo "[loop] baseline=$CURRENT_BASELINE"
 
 # Tracking variables
@@ -85,13 +87,13 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
   fi
 
   # Read decision
-  DECISION="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/controller_result.json").read_text(encoding="utf-8"))["decision"])')"
-  NEW_BASELINE="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("eval/baseline.json").read_text(encoding="utf-8"))["score"])')"
+  DECISION="$($PYTHON -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/controller_result.json").read_text(encoding="utf-8"))["decision"])')"
+  NEW_BASELINE="$($PYTHON -c 'import json; from pathlib import Path; print(json.loads(Path("eval/baseline.json").read_text(encoding="utf-8"))["score"])')"
 
   echo "[loop] decision=$DECISION baseline_now=$NEW_BASELINE"
 
   # Track improvement streak
-  if python3 -c "import sys; new=float('$NEW_BASELINE'); old=float('$CURRENT_BASELINE'); sys.exit(0 if new > old else 1)"; then
+  if $PYTHON -c "import sys; new=float('$NEW_BASELINE'); old=float('$CURRENT_BASELINE'); sys.exit(0 if new > old else 1)"; then
     NO_IMPROVEMENT_STREAK=0
   else
     NO_IMPROVEMENT_STREAK=$((NO_IMPROVEMENT_STREAK + 1))
@@ -102,7 +104,7 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
 
   # Check target score
   if [[ -n "$TARGET_SCORE" ]]; then
-    if python3 -c "target=float('$TARGET_SCORE'); current=float('$CURRENT_BASELINE'); import sys; sys.exit(0 if current >= target else 1)"; then
+    if $PYTHON -c "target=float('$TARGET_SCORE'); current=float('$CURRENT_BASELINE'); import sys; sys.exit(0 if current >= target else 1)"; then
       echo "[loop] Target score reached: $CURRENT_BASELINE >= $TARGET_SCORE"
       break
     fi
@@ -117,7 +119,7 @@ done
 
 # Generate final report
 echo "[loop] Generating final report..."
-python3 scripts/make_final_report.py
+$PYTHON scripts/make_final_report.py
 
 echo "[loop] All iterations completed"
 echo "Final baseline: $CURRENT_BASELINE"

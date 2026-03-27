@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+PYTHON="${PYTHON:-python3}"
+
 mkdir -p tmp
 
-START_TS="$(python3 -c 'import time; print(time.time())')"
+START_TS="$($PYTHON -c 'import time; print(time.time())')"
 EXIT_CODE=0
 STDOUT_FILE="tmp/tests_stdout.txt"
 STDERR_FILE="tmp/tests_stderr.txt"
@@ -15,9 +17,15 @@ else
   : > "$STDERR_FILE"
 fi
 
-END_TS="$(python3 -c 'import time; print(time.time())')"
+END_TS="$($PYTHON -c 'import time; print(time.time())')"
 
-python3 <<PY
+if [ "$EXIT_CODE" -eq 0 ]; then
+  PASSED="True"
+else
+  PASSED="False"
+fi
+
+$PYTHON <<PY
 import json
 from pathlib import Path
 
@@ -25,7 +33,7 @@ start = float("$START_TS")
 end = float("$END_TS")
 stdout = Path("$STDOUT_FILE").read_text(encoding="utf-8", errors="ignore") if Path("$STDOUT_FILE").exists() else ""
 stderr = Path("$STDERR_FILE").read_text(encoding="utf-8", errors="ignore") if Path("$STDERR_FILE").exists() else ""
-passed = $([ "$EXIT_CODE" -eq 0 ] && echo "True" || echo "False")
+passed = $PASSED
 
 result = {
     "passed": passed,

@@ -14,6 +14,8 @@ FORBIDDEN_PATHS = [
     "eval/frozen_eval.py",
     "eval/fixtures.json",
     "eval/baseline.json",
+    "agent/RESULTS.tsv",
+    "agent/DECISIONS.md",
 ]
 
 

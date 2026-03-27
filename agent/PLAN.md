@@ -4,8 +4,8 @@
 H-001: normalize punctuation in queries
 
 ## Change Scope
-- `src/search/normalize.py`
-- 필요 시 관련 테스트 파일 최소 범위 수정
+- src/query_processor.py
+- tests/test_query_processor.py
 
 ## Planned Change
 - query 입력에서 punctuation을 제거 또는 normalize한다.

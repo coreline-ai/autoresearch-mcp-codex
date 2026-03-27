@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
+# NOTE: This is the SHELL implementation (non-primary).
+# The primary execution path is: python orchestrator/cli.py single ...
+# This script uses a PLACEHOLDER implementer and does NOT call Claude CLI.
 set -euo pipefail
+
+export PYTHON="${PYTHON:-python3}"
 
 # Default values
 ITERATION=1
@@ -32,7 +37,7 @@ echo "[iteration $ITERATION] Starting..."
 
 # Update state
 update_state() {
-  python3 <<PY
+  $PYTHON <<PY
 import json
 from pathlib import Path
 state = {
@@ -53,11 +58,11 @@ PY
 # Phase: IMPLEMENT (placeholder)
 update_state "implement"
 
-python3 <<PY
+$PYTHON <<PY
 import json
 from pathlib import Path
 result = {
-  "changed_files": ["src/search/normalize.py"],
+  "changed_files": ["src/query_processor.py"],
   "change_summary": "placeholder: applied punctuation normalization",
   "why_this_change": "should improve matching consistency",
   "verification_commands_run": [],
@@ -81,15 +86,15 @@ bash scripts/run_eval.sh
 update_state "decide"
 
 # Read eval result
-SCORE_AFTER="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/eval_result.json").read_text(encoding="utf-8"))["score"])')"
-TESTS_PASS="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/tests_result.json").read_text(encoding="utf-8"))["passed"])')"
+SCORE_AFTER="$($PYTHON -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/eval_result.json").read_text(encoding="utf-8"))["score"])')"
+TESTS_PASS="$($PYTHON -c 'import json; from pathlib import Path; print(json.loads(Path("tmp/tests_result.json").read_text(encoding="utf-8"))["passed"])')"
 
 DECISION="reject"
 DECISION_CODE="NO_IMPROVEMENT"
 ROLLBACK_REASON="placeholder: score did not improve"
 
 # Simple decision logic (will be enhanced with real Codex connection)
-if python3 -c "import sys; exit(0 if float('$SCORE_AFTER') > float('$BASELINE') else 1)"; then
+if $PYTHON -c "import sys; exit(0 if float('$SCORE_AFTER') > float('$BASELINE') else 1)"; then
   DECISION="accept"
   DECISION_CODE="ACCEPT"
   ROLLBACK_REASON=""
@@ -101,7 +106,7 @@ echo "[iteration $ITERATION] Decision: $DECISION (score: $BASELINE → $SCORE_AF
 if [[ "$DECISION" == "accept" ]]; then
   update_state "accept"
   # Update baseline
-  python3 <<PY
+  $PYTHON <<PY
 import json
 from pathlib import Path
 baseline = json.loads(Path("eval/baseline.json").read_text(encoding="utf-8"))
@@ -121,7 +126,7 @@ fi
 
 # Write controller result for loop orchestration (after rollback)
 mkdir -p tmp
-python3 <<PY
+$PYTHON <<PY
 import json
 from pathlib import Path
 result = {
@@ -141,7 +146,7 @@ PY
 update_state "archive"
 
 # Log result
-python3 <<PY
+$PYTHON <<PY
 import json
 import subprocess
 from pathlib import Path
@@ -165,14 +170,14 @@ payload = {
 
 # Call log_result.py via stdin
 subprocess.run(
-  ["python3", "scripts/log_result.py"],
+  ["$PYTHON", "scripts/log_result.py"],
   input=json.dumps(payload).encode("utf-8"),
   check=False
 )
 PY
 
 # Update memory via stdin
-python3 scripts/update_memory.py <<PY || true
+$PYTHON scripts/update_memory.py <<PY || true
 {
   "iteration": $ITERATION,
   "status": "$DECISION",
